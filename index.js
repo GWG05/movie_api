@@ -1,4 +1,7 @@
-const express = require('express');
+const express = require('express'),
+    morgan = require('morgan');
+
+    
 const app = express();
 
 let topMovies = [
@@ -44,6 +47,10 @@ let topMovies = [
     }
 ];
 
+app.use(morgan('common'));
+
+app.use(express.static('public'));
+
 // GET requests
 app.get("/movies", (req, res) => {
     res.json(topMovies);
@@ -52,6 +59,11 @@ app.get("/movies", (req, res) => {
 app.get("/", (req, res) => {
     res.send('Welcome to myFlix API.')
 })
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 // listen for requests
 app.listen(8080, () => {
