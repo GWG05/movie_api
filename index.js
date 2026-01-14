@@ -243,18 +243,48 @@ app.get("/movies", (req, res) => {
     res.status(200).json(Movies);
 })
 
+app.get("/movies", async (req, res) => {
+  try {
+    const movies = await Movies.find();
+    console.log(movies);
+    return res.status(200).json(movies);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
 // READ/GET requests
 app.get("/movies/:title", (req, res) => {
+  const { title } = req.params;
+  const movie = Movies.find( movie => movie.Title === title );
+  
+  if (movie) {
+    res.status(200).json(movie);
+  } else {
+    res.status(400).send("no such movie")
+  }
+  
+})
+
+// READ/GET requests
+app.get("/movies/:title", async (req, res) => {
+  try {
     const { title } = req.params;
-    const movie = Movies.find( movie => movie.Title === title );
+    const movie = await Movies.findOne({ Title: title });
 
     if (movie) {
-        res.status(200).json(movie);
-    } else {
-        res.status(400).send("no such movie")
-    }
+      return res.status(200).json(movie);
+    } 
+    
+    return res.status(400).send("no such movie");
+  } catch (error) {
+    console.error(error);
 
-})
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 // READ/GET requests
 app.get("/movies/genre/:genreName", (req, res) => {
