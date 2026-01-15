@@ -238,10 +238,10 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
   });
 });
 
-// READ/GET requests
-app.get("/movies", (req, res) => {
-    res.status(200).json(Movies);
-})
+// // READ/GET requests
+// app.get("/movies", (req, res) => {
+//     res.status(200).json(Movies);
+// })
 
 app.get("/movies", async (req, res) => {
   try {
