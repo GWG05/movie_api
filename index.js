@@ -255,18 +255,18 @@ app.get("/movies", async (req, res) => {
 });
 
 
-// READ/GET requests
-app.get("/movies/:title", (req, res) => {
-  const { title } = req.params;
-  const movie = Movies.find( movie => movie.Title === title );
+// // READ/GET requests
+// app.get("/movies/:title", (req, res) => {
+//   const { title } = req.params;
+//   const movie = Movies.find( movie => movie.Title === title );
   
-  if (movie) {
-    res.status(200).json(movie);
-  } else {
-    res.status(400).send("no such movie")
-  }
+//   if (movie) {
+//     res.status(200).json(movie);
+//   } else {
+//     res.status(400).send("no such movie")
+//   }
   
-})
+// })
 
 // READ/GET requests
 app.get("/movies/:title", async (req, res) => {
