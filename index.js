@@ -171,36 +171,6 @@ app.delete('/users/:id/movies/:movieTitle', (req, res) => {
     }
 })
 
-//DELETE users account
-app.delete('/users/:id', (req, res) => {
-    const { id } = req.params;
-
-    let user = users.find( user => user.id == id);
-
-    if (user) {
-        users = users.filter( user => user.id != id);
-        res.status(200).send(`user ${id} has been deleted`);
-    } else {
-        res.status(400).send('no such user')
-    }
-})
-
-// Delete a user by username
-app.delete('/users/:Username', async (req, res) => {
-  await Users.findOneAndRemove({ Username: req.params.Username })
-    .then((user) => {
-      if (!user) {
-        res.status(400).send(req.params.Username + ' was not found');
-      } else {
-        res.status(200).send(req.params.Username + ' was deleted.');
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-    });
-});
-
 // //UPDATE/PUT requests
 // app.put('/users/:id', (req, res) => {
 //     const { id } = req.params;
@@ -262,6 +232,37 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
   });
 });
 
+//DELETE users account
+app.delete('/users/:id', (req, res) => {
+    const { id } = req.params;
+
+    let user = users.find( user => user.id == id);
+
+    if (user) {
+        users = users.filter( user => user.id != id);
+        res.status(200).send(`user ${id} has been deleted`);
+    } else {
+        res.status(400).send('no such user')
+    }
+})
+
+// Delete a user by username
+app.delete('/users/:Username', async (req, res) => {
+  await Users.findOneAndRemove({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + ' was not found');
+      } else {
+        res.status(200).send(req.params.Username + ' was deleted.');
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
+
 // // READ/GET requests
 // app.get("/movies", (req, res) => {
 //     res.status(200).json(Movies);
@@ -277,7 +278,6 @@ app.get("/movies", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
-
 
 // // READ/GET requests
 // app.get("/movies/:title", (req, res) => {
