@@ -201,20 +201,20 @@ app.delete('/users/:Username', async (req, res) => {
     });
 });
 
-//UPDATE/PUT requests
-app.put('/users/:id', (req, res) => {
-    const { id } = req.params;
-    const updatedUser = req.body;
+// //UPDATE/PUT requests
+// app.put('/users/:id', (req, res) => {
+//     const { id } = req.params;
+//     const updatedUser = req.body;
 
-    let user = users.find( user => user.id == id);
+//     let user = users.find( user => user.id == id);
 
-    if (user) {
-        user.name = updatedUser.name;
-        res.status(200).json(user);
-    } else {
-        res.status(400).send('no such user')
-    }
-})
+//     if (user) {
+//         user.name = updatedUser.name;
+//         res.status(200).json(user);
+//     } else {
+//         res.status(400).send('no such user')
+//     }
+// })
 
 // Update a user's info, by username
 /* We’ll expect JSON in this format
