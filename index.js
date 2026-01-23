@@ -201,6 +201,10 @@ app.post("/users", async (req, res) => {
  * @returns {Object} The updated user.
  */
 app.put("/users/:Username", passport.authenticate('jwt', { session: false }), async (req, res) => {
+  if(req.user.Username !== req.params.Username){
+    return res.status(400).send('Permission denied');
+  }
+
   try {
     const filter = { Username: req.params.Username };
     const options = { new: true };
@@ -254,6 +258,10 @@ app.put("/users/:Username", passport.authenticate('jwt', { session: false }), as
  * @returns {Object} The updated user.
  */
 app.post("/users/:Username/movies/:movieId", passport.authenticate('jwt', { session: false }), async (req, res) => {
+  if(req.user.Username !== req.params.Username){
+    return res.status(400).send('Permission denied');
+  }
+
   try {
     const filter = { Username: req.params.Username };
     const options = { new: true };
@@ -283,6 +291,10 @@ app.post("/users/:Username/movies/:movieId", passport.authenticate('jwt', { sess
  * @returns {Object} The updated user.
  */
 app.delete("/users/:Username/movies/:movieId", passport.authenticate('jwt', { session: false }), async (req, res) => {
+  if(req.user.Username !== req.params.Username){
+    return res.status(400).send('Permission denied');
+  }
+
   try {
     const filter = { Username: req.params.Username };
     const options = { new: true };
@@ -312,6 +324,10 @@ app.delete("/users/:Username/movies/:movieId", passport.authenticate('jwt', { se
  * @returns {string} Success message indicating the user has been deleted.
  */
 app.delete("/users/:Username", passport.authenticate('jwt', { session: false }), async (req, res) => {
+  if(req.user.Username !== req.params.Username){
+    return res.status(400).send('Permission denied');
+  }
+
   try {
     const { Username } = req.params;
 
