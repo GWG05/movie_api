@@ -3,6 +3,8 @@ const express = require("express"),
   bodyParser = require("body-parser");
 
 const app = express();
+const { check, param, body, validationResult } = require('express-validator');
+
 app.use(bodyParser.json());
 app.use(morgan("common"));
 app.use(express.static("public"));
@@ -13,6 +15,23 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 mongoose.connect("mongodb://127.0.0.1:27017/myflixDB");
+
+const cors = require('cors');
+let allowedOrigins = [
+  'http://localhost:8080', 'http://testsite.com'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      // If a specific origin isn't found on the list of allowed origins
+      let message = "The CORS policy for this application doesn't allow access from origin " + origin;
+      return callback(new Error(message ), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 let auth = require('./auth')(app);
 
@@ -155,9 +174,24 @@ app.get("/users/:Username", passport.authenticate('jwt', { session: false }), as
  * @param {Object} req.body - The data of the new user to be created.
  * @returns {Object} The newly created user.
  */
-app.post("/users", async (req, res) => {
+app.post("/users",
+  [
+    check('Username', 'Username is required').isLength({min: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ], async (req, res) => {
   try {
+    // check validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ error: errors.array() });
+    }
+
     const newUser = req.body;
+
+    let hashedPassword = Users.hashPassword(newUser.Password);
 
     // Input validation
     if (!newUser.Username || !newUser.Password || !newUser.Email) {
@@ -176,7 +210,7 @@ app.post("/users", async (req, res) => {
 
     user = await Users.create({
       Username: newUser.Username,
-      Password: newUser.Password,
+      Password: hashedPassword,
       Email: newUser.Email,
       Birthday: newUser.Birthday,
     });
@@ -188,6 +222,14 @@ app.post("/users", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+
+    if (error.name === "ValidationError") {
+      const message = Object.values(error.errors).map(value => value.message);
+      return res.status(400).json({
+        error: message
+      });
+    }
+
     return res.status(500).json({ error: error.message });
   }
 });
@@ -356,6 +398,7 @@ app.use((err, req, res, next) => {
 });
 
 // listen for requests
-app.listen(8080, () => {
-  console.log("Your app is listening on port 8080.");
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0',() => {
+ console.log('Listening on Port ' + port);
 });
