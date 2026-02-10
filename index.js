@@ -14,7 +14,9 @@ const Models = require("./models.js");
 const Movies = Models.Movie;
 const Users = Models.User;
 
-mongoose.connect("mongodb://127.0.0.1:27017/myflixDB");
+/* mongoose.connect("mongodb://127.0.0.1:27017/myflixDB"); */
+
+mongoose.connect(process.env.CONNECTION_URI, {});
 
 const cors = require('cors');
 let allowedOrigins = [
